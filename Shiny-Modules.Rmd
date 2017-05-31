@@ -1,0 +1,400 @@
+---
+title: "Intro Shiny Modules"
+author: "Phil Bowsher"
+date: "5/31/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+R is a powerful programming language for statistical computing with many packages and tools.
+
+The goal of this article is to intro and outline some ways to work with Shiny Modules.
+
+We'll cover the main approaches below:
+
+
+## My take
+
+Shiny is maturing and people are looking for more advanced ways to manage code and functions. Joe Cheng and the team created modules with Shiny update 0.13.0.
+
+https://blog.rstudio.org/2016/01/20/shiny-0-13-0/
+
+Shiny modules can help structure and simplify code for large apps though many use cases (POCs) are for smaller apps and modularizing code may not be needed.
+
+If you do have large apps, then modules can help though they tend to require an understanding beyond that of basic Shiny development.
+
+Rather than adding modules for individual apps, I see the most impactful win from modules being a package that contains modules that people can benefit from throughout an organization. Even better would be a package on cran or github that has modules that many people can use and benefit from as we will see with some of the examples below.
+
+## How we got here
+
+Ian Lyttle whose earlier work with shinychord provided inspiration for modules.
+
+https://github.com/ijlyttle/shinychord
+
+It is common practice for people to add Shiny apps to packages that are either complete Shiny apps or have Shiny apps as part of the package. Here are some examples:
+
+https://github.com/aaronjfisher/interAdapt
+https://github.com/chjackson/MetaAnalyser
+https://github.com/crtahlin/medplot/
+
+What some people have done is create packages which are Shiny modules for people to use with their own apps. Here is an example:
+
+https://github.com/ijlyttle/shinypod
+
+Here is a live example using the shinypod package:
+
+https://ijlyttle.shinyapps.io/read_delim_dygraph/
+
+I see two main use cases for Shiny modules, the first is simplifying large Shiny apps and second using a package that has modules for use in other apps.
+
+If your organization is contemplating using Shiny modules, you may think about finding a developer that can create modules and wrap it into a package for others to use.
+
+As opposed to shinypod, here is an example where a Shiny app via a package has been modularized.
+
+https://github.com/pinin4fjords/shinyngs
+
+https://github.com/pinin4fjords/shinyngs/blob/master/R/selectmatrix.R
+
+https://github.com/pinin4fjords/shinyngs/blob/76d28166b269e12efcfd0371115e8e05bda4fb1e/R/foldchangeplot.R
+
+I have included 11 examples that show how to modularize individual apps with a hope that it helps teach the basics of Shiny modules and guides you down the path of creating packages like shinypod that can be used by more and more people. This is accomplished by bundling modules in packages and then one loads the library and call the modules.
+
+Here is another example of a package with modules for Shiny apps:
+
+http://metrumrg.com/blog/2017/02/ggedit011.html
+https://github.com/metrumresearchgroup/ggedit
+
+Ian Lyttle describes large complex Shiny apps as reactive spaghetti and modularized code as reactive  ravioli. Please see the video here:
+
+https://www.rstudio.com/resources/videos/shiny-modules/
+
+## Use case for Shiny modules
+
+When you have lots of repetition, long/complex apps and when it is hard to find parts of your code, you likely have a good use case for modules. Among different apps, you may be doing the same things over and over again, like uploading and parsing csv files. As the app becomes larger, the code becomes increasingly difficult to maintain as the number of inputs, outputs and reactive values and their interdependencies rapidly increase. Within a given app, your ui and server functions may become difficult to manage as inputs, outputs, and reactives pile up. If you regularly find yourself implementing the same pieces of functionality, such as reading data into the app and some way to filter the data set, then modules could help make your development easier.
+
+Here are some common use cases for Shiny modules:
+
+1. Data input like loading CSV files
+2. Data visualizations via ggplot2 scatterplot
+3. Routine Data analysis like linear regression:
+https://github.com/wallingTACC/oncourse/blob/4a85a5360c62fd4951e366b5579726f8025239ef/admissions-dashboard/RegressionModule.R
+4. Data output from Shiny apps via downloaders
+
+## Advantages & Benefits
+
+Like functions, Shiny modules can be called many times for various use cases. One can reuse code in the same app or in a different app. For example, many people have created debugging modules used for Shiny app development that can be used with various apps in development.
+
+https://github.com/stanstrup/QC4Metabolomics/tree/master/Modules/Debug
+
+Modules can help promote the standardization of apps and simpler & isolated code.
+
+Modules also help to solve the issue of re-useability. Rather than copy and paste code, you can use modules to help manage the pieces.
+
+## Disadvantages
+
+Adds some complexity to Shiny app development for beginners and intermediate developers.
+
+Requires that the other people know how to use your module if you plan to share it.
+
+Could add complexity to debugging Shiny apps.
+
+Changes the look and feel of standard Shiny apps.
+
+## Modules vs. Functions
+
+Why not just use Functions? Well, Functions don't solve the whole problem since the inputs and outputs share a global namespace across the application and so if you are defining them within functions you need to be careful to ensure you don’t have any ID collisions. The main issue here is avoiding collisions in the input and output namespaces. Doing this can also mean that your functions are not self-contained and makes them difficult to reason about in isolation. Shiny modules help solve this issue.
+
+http://www.aridhia.com/blog/using-shiny-modules-to-simplify-building-complex-apps/
+
+You can create a function that outputs the UI elements you need and then, instead of repeating the code that creates those elements you can simply call the function.
+ 
+http://zevross.com/blog/2016/04/19/r-powered-web-applications-with-shiny-a-tutorial-and-cheat-sheet-with-40-example-apps/#create-re-useable-ui-elements
+
+But if you’re using functions to generate UI, and those functions generate inputs and outputs, then you need to ensure that none of the IDs collide.
+
+The best functions should:
+1. Collect input as an argument
+2. Return output as a return value
+
+The best modules should:
+1. Collect input as an argument
+2. Return output as a return value
+…especially when you exchange reactive
+information.
+
+## So then what are modules?
+
+A module is self-contained, composable component of a Shiny App. Like a function, a module does something all by itself. In simplest terms, think of modules as a *Shiny function*. Shiny modules are reusable parts of a Shiny app. Shiny modules are a relatively new addition to R Shiny that provide a clearly defined way to abstract application code into reusable pieces of an application. 
+
+Shiny modules add namespacing to Shiny UI and server logic.
+
+https://shiny.rstudio.com/articles/modules.html
+
+
+## Simple ways to get strated / How do I learn?
+
+https://www.rstudio.com/resources/webinars/understanding-shiny-modules/
+
+https://github.com/rstudio/webinars/tree/master/19-Understanding-modules
+
+https://github.com/rstudio/ShinyDeveloperConference
+
+https://github.com/rstudio/ShinyDeveloperConference/tree/master/Modules
+
+https://github.com/jcheng5/rstudio2017-shiny-workshop
+
+https://github.com/jcheng5/rstudio2017-shiny-workshop/blob/5ed11fc703b53535c1c4e263cfd38a772bbbf1ef/apps/dataviewer/exercise_2.solution.R
+
+https://www.rstudio.com/resources/videos/shiny-modules/
+
+https://github.com/byandell/shiny_module
+
+http://zevross.com/blog/2016/04/19/r-powered-web-applications-with-shiny-a-tutorial-and-cheat-sheet-with-40-example-apps/#shiny-modules
+
+https://github.com/zross/shiny_blogpost/tree/83c132f712c8112f4fd2577df19e7bd49a4139fb/blog_app34
+
+## How to start modularizing Shiny app code
+
+A Shiny module is a piece of a Shiny app. Modules can represent input, output, or both.
+
+A module is composed of *two functions* that represent 1) a piece of *UI*, and 2) a fragment of *server* logic that uses that UI.
+
+When reusing modules, give the module a unique id each time you call it.
+
+https://www.rstudio.com/resources/webinars/understanding-shiny-modules/
+
+A Shiny module consists of a function to create the UI and a function to be called within the server function using *callModule*.
+
+## UI FUNCTION
+
+A good naming convention for the UI function of the module is to suffix the name with Input, Output or UI, depending on whether the UI is taking inputs for the server logic, presenting outputs from the server logic, or a mixture of both.
+
+A module’s UI function should be given a name that is suffixed with Input, Output, or UI; for example, csvFileInput, zoomableChoroplethOutput, or tabOneUI.
+
+The first argument to a UI function should always be id. This is the namespace for the module.
+
+In your app UI you can include any UI elements that are not included in the module and you would include your module. Since your module UI is a function you would call this function and feed it a prefix, anything you want.
+
+The Module UI is a function that takes, as input, an id that will end up getting pre-pended to all your HTML element ids. 
+
+## NS
+
+NS() and ns() functions are the most important thing in modules. Any inputs you define inside a module should namespace their ids.
+
+https://stackoverflow.com/questions/36353961/r-shiny-modules
+
+Assign module elements to a unique namespace with NS().
+
+Inside the function, before doing anything else, we create a function to create namespaced IDs using the NS function. This allows us to namespace the IDs for any inputs any outputs referenced in the module UI. To do this we simply wrap any input or output ids in the namespacing function, for example we pass ns("dt") as the outputId argument for dataTableOutput.
+
+The function body starts with the statement ns <- NS(id).
+
+Anything input or output ID of any kind that appears in the function body needs to be wrapped in a call to ns().
+
+You will need to Wrap multiple elements in tagList(), results are wrapped in tagList and is optional.
+
+The helper function is called NS. Essentially NS just creates a new function you can use to do the pasting a little more simply.
+
+NS( ) - Adds a prefix to an id to create a "namespace". Create a namespace function using the provided id.
+
+The UI should prefix all the input and output IDs using NS( ). The callModule function magically handles prefixing for the server component.
+
+https://monashbioinformaticsplatform.github.io/2016-11-03-r-shiny/tutorial.html
+
+## callModule
+
+To use a module in the server of an application we need to use the callModule function which takes the module server function as its first argument, an id for the namespace as its second argument and any additional arguments defined for the module beyond the input, output and session arguments.
+
+To call a module you need to run a Shiny function callModule. Next, a character id for the elements the module will create in the Shiny environment and finally the arguments that are expected by the module, for example, a reactive object that outputs a ggplot or list of ggplots. 
+
+Similar to the app UI you would include any non-module related processing in your app server and then you include the module server with the function callModule. You feed callModule the name of the module server function and the prefix you’re using and any additional arguments to your module server.
+
+The module server function is not called directly; instead, call the callModule function, and provide the module server function as the first argument. 
+
+## SERVER FUNCTION
+
+You will have a function that loads server logic. The module server will include the processing needed for your module and looks almost identical to your non-module server function except that you will likely want to allow it to accept additional arguments.
+
+The server function for a module has three mandatory arguments: input, output and session. 
+
+In the module server, you must use all 3 arguments: input, output, session.
+
+As discussion before, load the module server function in your app’s server function with callModule().
+
+Arguments: callModule passes extra arguments in order to module server function.
+
+Do not use ns() to refer to inputs and outputs from the module.
+
+## How to pass reactive values?
+
+Reactive expressions are the most portable format for passing reactive information between functions.
+
+To pass reactive input to a module:
+
+1. Wrap the input as a reactive expression, e.g. foo <- reactive({ rv$foo })
+
+2. Pass the reactive expression, not the value, to the module, i.e do NOT use ( )’s.
+
+3. Treat the argument as a reactive expression within the module, i.e. do use ( )’s.
+
+To return reactive output from a module:
+
+1. Return reactive output as a reactive expression or a list of reactive expressions
+
+2. Call value as a reactive expression, i.e. with ( )’s
+
+The module seems to want "unresolved" reactives. The parentheses "resolves" them.
+
+https://stackoverflow.com/questions/36695577/shiny-module-that-calls-a-reactive-data-set-in-parent-shiny-server/36698254
+
+To Pass a single input to multiple modules, make a reactive value.
+
+The first thing you might assume you can do when you want to pass an input value to a module is simply do callModule(chart,"chartA",input$bins). Unfortunately, this does not work because the callModule() function is not inherently reactive. It has to be forced to be reactive with a reactive value.
+
+We can make a reactive value very simply:
+
+bins<-reactive({ input$bins })
+
+https://itsalocke.com/shiny-module-design-pattern-pass-inputs-one-module-another/
+
+## Putting it together
+
+https://itsalocke.com/shiny-module-design-patterns-pass-module-inputs-modules/
+
+To be able to pass an input value from one module to another, you need to:
+
+1. Make a module that returns a reactive expression for the input value
+2. Store the callModule results in a variable
+3. Add an argument to your module’s server function arguments
+4. Pass the name of the variable to the module
+5. Use argument() not argument within the module’s server function main code
+
+Key things to notice about namespace use for modules:
+
+https://github.com/byandell/shiny_module
+
+module UI and server must use same id
+sliderTextUI("module") # in ui function
+callModule(sliderText, "module", ...) # in server function
+
+module server needs session as third argument
+return argument from module server (if any) must be reactive()
+
+module UI needs two nameserver components
+ns <- NS(id) # to create namespace ID function
+tagList( # tag list to wrap UI entries
+sliderInput(ns("slider"), ...) # to use namespace ID
+) # ends tag list
+
+module server has no special arrangements except in use of renderUI()
+ns <- server$ns # to access namespace ID function
+output$set_slider <- renderUI({
+sliderInput(ns("slider"), ...) # to use namespace Id
+})
+
+module server has no special arrangements for update*Input
+updateSliderInput(server, "slider", ...)
+used in observe() and observeEvent()
+
+conditionalPanel does not work as expected with modules
+condition argument is interpreted by javascript
+input elements for a module namespace require care with JS
+see Rstudio Shiny issue or TB Adams gist for helpful solutions:
+
+https://github.com/rstudio/shiny/issues/1586
+
+https://gist.github.com/tbadams45/49c71a4314f6b4f299583f4ba96fee54
+
+## Advanced
+
+https://github.com/stephlocke/shinymodulesdesignpatterns
+
+https://itsalocke.com/tag/shiny-design-patterns/
+
+https://itsalocke.com/shiny-module-design-pattern-pass-inputs-one-module-another/
+
+https://github.com/stephlocke/shinymodulesdesignpatterns
+
+You can nest modules in other modules.
+
+Nested uses - Wrap inner module ids with ns() within UI function.
+
+Rendered UI - Access the namespace id with session$ns in the module server function.
+
+ConditionalPanel is tricky with modules. See:
+https://github.com/rstudio/shiny/issues/1586
+https://gist.github.com/tbadams45/49c71a4314f6b4f299583f4ba96fee54 
+
+https://groups.google.com/forum/#!topic/shiny-discuss/js7SuA9_h10
+
+"In your examples, you're splitting the uiOutput and the renderUI calls across distinct modules. That's something you don't want to do. Instead, endeavor to keep the uiOutput and renderUI defined in the same module."
+
+"It's OK to have an n-to-1 relationship between UI functions and module server functions. Just make sure that all the UI functions for a given module instance are invoked with the same id, as I do in the gist."
+
+## In flexdashboard
+
+https://github.com/asperitus/R/blob/ba7d3c333a07f5d925e02ba297093e3937175a91/lib/R/library/flexdashboard/examples/shiny-embedding.Rmd
+
+## Packaging and reusing modules
+
+Once created, a Shiny module can be easily reused–whether across different apps, or multiple times in a single app (like a set of controls that needs to appear on multiple tabs of a complex app).
+
+Modules can even be bundled into R packages and used by other Shiny authors.
+
+Here is an example:
+
+https://nickstrayer.shinyapps.io/shinysense_swipr_demo/
+https://github.com/nstrayer/shinysense
+https://github.com/nstrayer/shinyswipr
+
+https://github.com/ijlyttle/shinypod
+
+https://ijlyttle.shinyapps.io/read_delim/
+
+https://ijlyttle.shinyapps.io/read_delim_dygraph/
+
+Where to define the module functions?
+
+1. In the preamble of a single file app (app.R)
+2. In a file that is sourced in the preamble of a single file
+app (app.R)
+3. In global.R
+4. In a file sourced by global.R
+5. In a package that the app loads
+
+Most simply, you can put the UI and server function code directly in your app.
+
+If you’re using a ui.R/server.R style file layout, add a global.R file to your app directory (if you don’t already have one) and put the UI and server functions there.
+
+You can create a separate .R file for the module, either directly in the app directory or in a subdirectory.
+
+Or modules that are intended for reuse across applications, consider building an R package.
+
+## Examples
+
+Repo here has 11 simple examples
+
+https://github.com/rstudio/webinars/tree/master/19-Understanding-modules/modules
+
+https://beta.rstudioconnect.com/seanlopp/ShinyModulesDemo/
+https://github.com/slopp/ShinyModulesDemo
+
+## Further Reading
+
+- https://itsalocke.com/shiny-module-design-pattern-pass-inputs-one-module-another/
+- https://github.com/ijlyttle/shinypod
+- https://stackoverflow.com/questions/36695577/shiny-module-that-calls-a-reactive-data-set-in-parent-shiny-server
+- https://stackoverflow.com/questions/39109671/r-shiny-modules-with-conditionalpanel-and-reactives
+- https://groups.google.com/forum/#!topic/shiny-discuss/js7SuA9_h10
+- http://shiny.rstudio.com/articles/bookmarking-modules.html
+- https://github.com/pinin4fjords/shinyngs/blob/76d28166b269e12efcfd0371115e8e05bda4fb1e/R/clustering.R
+- https://github.com/kdgosik/ShinyModules
+- https://github.com/20n/act/blob/907b3b6950dfb0c2b43336dea97e50b3e51ff18d/reachables/src/main/r/LCMSDataVisualisation/molecule_renderer.R
+- https://github.com/Yang-Tang/shinyAceMod/blob/4df9abb5bf69d533c976fed22d437407a1e16b30/shinyAceMod.R
+- https://github.com/samuel-bohman/module_example_1
+- http://www.buildingwidgets.com/blog/2017/2/7/super-simple-shiny-module-code
